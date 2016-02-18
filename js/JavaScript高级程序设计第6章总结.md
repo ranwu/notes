@@ -85,3 +85,44 @@ Object.defineProperty(person, "name", {
 
 还要记住，在调用 `Object.defineProperty()` 这个函数时，如果什么参数也不给，那么 `Enumerable`、 `Writeable`、`Configurable` 着三个参数的值都为 `false`
 
+### 访问器属性
+
+访问器属性不包含数据值，它们包含一对 `getter` 和 `setter` 函数，在读取访问器属性时，会调用 `getter` 函数，这个函数负责返回有效的值。在写入访问器属性时，会调用 `setter` 函数并传入新值，这个函数负责决定如何处理数据。访问起的4种特性：
+
+- `[[Configurable]]` 和上文一样的意思。
+- `[[Enumerable]]` 和上文一样的意思。
+- `[[Get]]` 在读取属性时调用的函数。默认值为 `undefined`。
+- `[[Set]]` 在写入时调用的函数。默认值为 `undefined`。
+
+访问起也必须使用 `Object.defineProperty()` 函数来定义。例子：
+
+```
+var book = {
+    _year: 2004,
+    edition: 1
+};
+
+Object.defineProperty(book, "year", {
+    get: function() {
+        return this._year;
+    },
+    set: function(newValue) {
+        
+        if (newValue > 2004) {
+            this._year = newValue;
+            this.edition += newValue - 2004
+        }
+    }
+    });
+
+book.year = 2005;
+alert(book.edtion); // 2
+```
+
+访问器属性也是针对对象的属性的特性的。比如，有个 `book` 对象，属性分别为：`_year: 2004`，`edition: 1`。在这个 `get` 和 `set` 方法中，我们可以为它指定任何方法。这样一来，当我们想访问某个对象属性的时候，系统会自动调用访问器属性 `get` ，然后，也就是执行 `get`对应的函数来返回预定的值。当我们想给对象的属性设置值的时候，就使用访问器属性 `set` 对应的函数来返回预定的值。
+
+给对象设置访问器属性的好处就是以更原生的方式定义对象属性的 `get` 和 `set` 函数。这样以来，如果我想给某个对象的属性赋予一个新的值，我不会去通过调用自己定义的 `get` 和 `set`方法，而是去使用 `=` 号来设置属性的值，以 `对象.属性` 的方式来访问属性的值，当然底层的实现方式就是我们所讲的*访问器属性*。
+
+`_year` ，像这种情况，这个变量的前面有一个下划线，用于表示只能通过对象方法访问的属性。即是 `get` 和 `set`。
+
+使用访问器属性的常见方式：即设置一个值会导致其他属性发生变化（不仅仅是被设置的那个属性）
