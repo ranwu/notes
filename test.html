@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+<script>
+	var person = {};
+	Object.defineProperty(person, "name", {
+		configurable: false,
+		value: "Nicholas"
+	});
+
+	Object.defineProperty(person, "name", {
+		configurable: true,
+		value: "Nicholas"
+	});
+</script>
+</body>
+</html>
