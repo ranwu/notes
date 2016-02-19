@@ -195,7 +195,7 @@ Object.defineProperties(book, {
 
 用ECMAScript5的 `Object.getOwnPropertyDescriptor` 可以取得属性的描述符。其实，一个属性分为数据属性和访问器属性，数据属性就是说这个属性的描述符（也就是对象属性的属性）为`configurable`、`enumerable`、`writable` 和 `value`。访问器属性（也是对象属性的属性）为`configurable`、`enumerable`、`set`、`get`
 
-```
+```javascript
 var book = {};
 
 Object.defineProperties(book, {
@@ -243,7 +243,7 @@ alert(typeof descriptor.get); // function
 **工厂模式：**
 这种模式抽象了创建具体对象的过程。也就是说，我们创建对象，只需要用它的API来创建即可。这也是一种常见的设计模式。比如我想构建一个对象，一般用 `var obj = new Object()` 就可以了。但是，我需要的是自定义对象，并且对象名也不一样。这时候就需要手动封装一个对象：
 
-```
+```javascript
 function createPerson(name, age, job) {
     var o = new Object();
     o.name = name;
@@ -270,3 +270,68 @@ var person2 = createPerson("Greg", 27, "Doctor");
 ### 构造函数模式
 
 又有一个新需求，我想知道对象的类型怎么办？
+
+我们可以使用原生构造函数，比如像 `Object`，`Array` 这样的。上文的工厂模式就是在一个函数下面使用了 `Object` 构造函数。好，我们使用自定义构造函数：
+
+```javascript
+function Person(name, age, job) { // 注意，构造函数名称第一个字母大写
+    this.name = name;
+    this.age = age;
+    this.job = job;
+    this.sayName = function() {
+        alert(this.name);
+    };
+}
+
+var person1 = new Person("Nicholas", 29, "Software Engineer");
+var person2 = new Person("Greg", 27, "Doctor");
+```
+
+构造函数要经历的4个创建步骤：
+
+1. 创建一个新对象;
+2. 将构造函数的作用域赋给新对象（因此this就指向了这个新对象）
+3. 执行构造函数中的代码（为这个新对象添加属性）
+4. 返回新对象
+
+每个通过构造函数创建的对象都有一个 `construcotor` （构造函数）属性。该属性指向构造函数名。
+
+就拿上文的例子来说，其中创建的两个 person 对象都有一个`constructor`属性，这个属性就指向 `Person` 这个构造函数，这样是不是就可以辨别对象类型呢？只要查看每个对象的 `constructor` 属性即可。其实更常用的检测对象类型的方式是 `instanceof`。
+
+以这种方式定义的构造函数是定义在`Global`对象中（浏览器是window）。
+
+对于任何函数，只要通过 `new` 操作符来调用，那它就可以作为构造函数。
+
+不同实例上的同名函数是不相等的。
+
+证明：
+
+```javascript
+alert(person1.sayName == person2.sayName); // false
+```
+
+然而，创建两个完成同样任务的Fucntion实例的确没有必要。况且有 `this` 对象的存在，根本不用在执行代码前就把函数绑定到特定对象上面。因此，可以把函数转移到外部来解决问题。
+
+```javascript
+function Person(name, age, job) {
+    this.name = name;
+    this.age = age;
+    this.job = job;
+    this.sayName = sayName;
+}
+
+function sayName() {
+    alert(this.name);
+}
+
+var person1 = new Person("Nicholas", 29, "Software Engineer");
+var person2 = new Person("Greg", 27, "Doctor");
+```
+
+由于`sayName`保存的只是指向其函数的指针，所以，不管有多少对象，都可以调用这个函数，而不是每个对象都要创建一个函数对象。
+
+---
+
+### 原型模式
+
+
