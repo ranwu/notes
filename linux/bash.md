@@ -243,4 +243,9 @@ username=${username:-root}
 
 ![各种替换方式总结](http://i.v2ex.co/4HdlMRdo.png)
 
+查看变量是否有值，如果没有值便会打印出预先设置好的内容：
+```
+var=${str?无此变数}
+```
 
+若str存在时，则var的内容会与str相同
