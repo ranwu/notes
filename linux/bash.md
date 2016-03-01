@@ -249,3 +249,113 @@ var=${str?无此变数}
 ```
 
 若str存在时，则var的内容会与str相同
+
+设置别名：
+
+```
+alias lm='ls -al | more'
+```
+
+查看有哪些别名：
+
+```
+alias
+```
+
+取消别名：
+```
+unalias
+```
+
+将历史记录写入 ～/.bash_history中：
+
+```
+history -w
+```
+
+执行上一个指令：
+
+```
+!!
+```
+
+执行以`!al` 开头的指令
+
+执行第66条指令：`!66`
+
+系统指令搜寻顺序：
+
+```
+1. 以相对/绝对路径执行指令
+2. 由alias找到该指令来执行
+3. 有bash内建的（builtin）指令来执行
+4. 透过$PATH这个变量的顺序搜寻到的第一个指令来执行
+```
+
+编辑`/etc/motd`可以让其他登录者看到消息。
+
+login shell: 取得bash时需要完整的登入流程的，就称为login shell，举例来说，你要由tty1～tty6登入，需要输入用户的帐号与密码，此时取得的bash就称为「login shell」了。
+
+non-login shell: 取得bash接口的方法不需要重复登入的举动。
+
+login shell启动时会读取的两个配置文件：
+
+1. `/etc/profile`: 这是系统整体的设定，最好不要修改这个档案;
+2. `~/.bash_profile`或`~/.bash_login`或`~/.profile`：属于使用者个人设定;
+
+在`/etc/profile`设置内容，每个login shell 都会读取这个配置文件。
+
+`/etc/profile`会调用的外部数据：
+
+*/etc/inputrc*
+
+`/etc/profile` 会主动地判断使用者有没有自定义输入的按键功能，如果没有的话，`/etc/profile`就会决定设定「INPUTRC=/etc/inputrc」这个变量。
+
+*/etc/profile.d/\*.sh*
+
+只要在`/etc/profile.d/`这个目录内且扩展名为`.sh`，另外，使用者能够具有r的权限，那么该档案就会被`/etc/profile`调用。如果你需要帮所有使用者设定一些共享的命令别名时，可以在这个目录底下自建扩展名为`.sh`的档案，并将所需的数据写入即可。
+
+*/etc/sysconfig/i18n*
+
+这个档案是由`/etc/profile.d/lang.sh`呼叫进来的，这是我们决定bash预设使用何种语系的重要配置文件。文件中最重要的就是`LANG`这个变量。
+
+*~/.bash_profile(login shell 才会读)*
+
+bash在读完了整体环境设定的`/etc/profile`并由此呼叫其他配置文件后，接下来则是会读取使用者的个人配置文件。以下是个人配置文件：
+
+1. `~/.bash_profile`
+2. `~/.bash_login`
+3. `~/.profile`
+
+其实 `bash` 的 `login shell` 设定只会读取上面三个文档的其中一个，而读取的顺序则是按照它来的。
+
+如果`~/.bash_profile`存在，那么不管其他文件有没有存在，都不会被读取。
+
+bash读取配置文件主要是透过指令「source」来读取的。同时也可以用小数点`.`来读取。
+
+```
+source ~/.bashrc
+. ~/.bashrc
+```
+
+如果命令提示符号消失，那么这样做可以恢复：
+
+复制/etc/skel/.bashrc 到你的家目录，再修订一下你所想要的内容，并用source去调用`~/.bashrc`
+
+还有一些配置文件可能会影响到你的bash操作的：
+
+*/etc/man.config*
+
+这个文档规定了使用`man`的时候，`man page`的路径需要到哪里去找。
+
+如果你是以tarball的方式来安装你的数据，那么你的`man page`可能会放置在`/usr/local/softpackage/man`里头，那个`softpackage`是你的套件名称，这个时候你就得以手动的方式将该路径加到`/etc/man.config`里头。
+
+这个档案最重要的是`MANPATH`这个变量设定。
+
+*~/.bash_history*
+
+预设的情况下，我们的历史命令就记录在这里。
+
+*~/.bash_logout*
+
+这个档案则记录了「当我注销bash后，系统再帮我做完什么动作才离开」的意思。不过，你也可以将一些备份或者是其他你认为重要的工作写在这个档案中，那么当你离开Linux的时候，就可以解决一些烦人的事情了。
