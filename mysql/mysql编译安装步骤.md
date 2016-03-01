@@ -76,4 +76,39 @@ cp support-files/mysql.server /etc/init.d/mysqld
 ```
 vim /etc/profile
 
+# 在文件末加入以下内容
+export PATH=$PATH:/usr/local/mysql/bin
+
+# 然后刷新文件
+source /etc/profile
 ```
+
+---
+
+修改mysql目录所有者和组
+
+cd /usr/local/mysql
+chown -R mysql:mysql . 
+
+初始化mysql数据库
+cd /usr/local/mysql/scripts/
+./mysql_install_db --user=mysql --datadir=/usr/local/mysql/var/  --basedir=/usr/local/mysql/
+
+复制mysql的配置文件
+cp /usr/local/mysql/support-files/my-default.cnf /etc/my.cnf 
+
+复制mysql服务启动脚本及加入PATH路径
+cp support-files/mysql.server /etc/init.d/mysqld   
+
+vim /etc/profile   
+  
+export PATH=$PATH:/usr/local/mysql/bin  
+  
+source /etc/profile  
+
+启动mysql服务并加入开机自启动(可选这个步骤，以后可以自己启动的)
+service mysqld start 
+chkconfig --level 35 mysqld on
+
+修改MySQL用户root的密码
+mysqladmin -u root password '123456'
