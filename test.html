@@ -19,3 +19,17 @@
 </script>
 </body>
 </html>
+
+sysbench --test=oltp \
+         --num-threads=1 \
+         --max-requests=80000 \
+         --oltp-test-mode=nontrx \
+         --db-driver=mysql \
+         --mysql-db=my_db \
+         --mysql-host=127.0.0.1 \
+         --mysql-port=1234 \
+         --mysql-user=user \
+         --mysql-password=pwd \
+         --oltp-nontrx-mode=select \
+         --db-ps-mode=disable \
+         prepare (run,cleanup)
