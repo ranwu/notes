@@ -503,3 +503,164 @@ cat > catfile << "eof"
 sync;sync;shutdown -h now
 ```
 
+|指令下达情况|说明|
+|cmd1&&cmd2|1.若cmd1执行完毕且正确执行($?=0)，则开始执行cmd2。2.若cmd1执行完毕且为错误($?!=0),则cmd2不执行。|
+|cmd1`||`cmd2|1.若cmd1执行完毕且正确执行($?=0)，则cmd2不执行。2.cmd1执行完毕且为错误($?!=0)，则开始执行cmd2。|
+
+```
+测试/tmp/abc是否存在，若不存在则予以建立，若存在就不作任何事情
+
+ls /tmp/abc || mkdir /tmp/abc
+```
+
+```
+我不清楚/tmp/abc是否存在，但就是要建立 /tmp/abc/hehe档案
+ls /tmp/abc || mkdir /tmp/abc && touch /tmp/abc/hehe
+```
+
+例题：
+
+以ls测试/tmp/vbirding是否存在，若存在则显示“exist”，若不存在，则显示“not exist”！
+
+```
+ls /tmp/vbirding && echo "exist" || echo "not exist"
+```
+
+向下面这种情况会出问题：
+
+```
+ls /tmp/vbirding || echo “not exist” && echo “exist”
+```
+
+分析：
+
+如果第一条语句返回的值为0,那么不会执行第二条语句，但是会执行最后一条语句也就是exist。
+
+如果第一条语句返回的值为非0,那么会执行第二条语句，也就是“not exist” ，但也会执行最后一条语句“exist”
+
+所以，一般的假设判断是这样的格式：
+
+```
+command1 && command2 || command3
+```
+
+### 管线命令（pipe）
+
+每个管线后面接的第一个数据必定是「指令」，而且这个指令必须要能够接受standard input的数据才行，这样的指令才可以是为「管线命令」。例如，less，more，head，tai等都是可以接受standard input的管线命令。
+
+注意：
+
+管线命令仅会处理standard output，对于standard error output会予以忽略
+
+管线命令必须要能够接受来自前一个指令的数据成为standard input 继续处理才行
+
+### 截取指令 cut grep
+
+```
+cut -d'分隔字符' -f fields # 以分隔字符的方式来分隔字符
+cut -C 字符区间 # 用于排列整齐的讯息
+
+选项与参数：
+
+-d: 后面接分隔字符。与-f一起使用
+-f：依据-d的分隔字符将一段信息分隔为数段，用-f取出第几段的意思
+-c：以字符的单位取出固定字符区间，数字符是从0开始
+```
+
+```
+范例一：将PATH变量取出，我要找出第5个路径
+
+echo $PATH | cut -d`:` -f 5
+
+范例二：截取第12个字符后面的字符
+
+export | cut -c 12-
+
+范例三：截取last输出信息的第一列
+
+last | cut -d ' ' -f 1
+```
+
+cut 是处理多行数据，grep则是处理单行数据。
+
+```
+grep [-acinv] [--color=auto] `搜寻字符串` filename
+
+选项参数：
+
+-a：将binary档案以text档案的方式搜寻数据
+-c：计算找到‘搜寻字符串’的次数
+-i：忽略大小写的不同，所以大小写视为相同
+-n：顺便输出行号
+-v：反响选择
+--color=auto：可以将找到的关键词部分加上颜色的显示！
+
+==================== 示例 =========================
+
+范例一：将last当中，有出现root的那一行就取出来
+
+last | grep ‘root’
+
+范例二：与范例一相反，只要没有root的就取出来
+
+last | grep -v 'root'
+
+范例三：在last的输出信息中，只要有root就取出，并且只取第一栏
+
+last | grep 'root' | cut -d ' ' -f 1
+
+范例四：取出/etc/man.config内含MANPATH的那几行
+
+grep --color=auto 'MANPATH' /etc/man.config
+
+```
+
+### 排序命令：sort，wc，uniq
+
+```
+sort [-fbMnrtuk] [file or stdin]
+
+选项与参数：
+
+-f : 忽略大小写的差异，例如A与a视为编码相同;
+-b: 忽略最前面的空格符部分
+-M：以月份的名字来排序，例如JAN，DEC等等的排序方法
+-n：使用「纯数字」进行排序（默认是以文字型态来排序的）
+-r：反向排序
+-U：就是uniq，相同的数据中，仅出现一行代表
+-t：分隔符，预设是用[tab]键来分隔
+-k：以那个区间来进行排序的意思
+
+================ 例子 =========================
+
+范例一：个人帐号都记录在/etc/passwd下，请将帐号进行排序
+
+cat /etc/passwd | sort 
+
+范例二：/etc/passwd内容是以冒号:来分隔的，我想以第三栏来排序，该如何？
+
+cat /etc/passwd | sort -t ':' -k 3
+
+默认是以文字方式来排序的，所以看不到想象中的数字排序效果，达到预期效果需要使用：
+
+cat /etc/passwd | sort -t ':' -k 3 -n
+
+```
+
+如果我排序完成了，想要将重复的资料仅列出一个显示，可以怎么做呢？
+
+```
+uniq [-ic]
+
+选项参数：
+-i ：忽略大小写字符的不同;
+-c ：进行计数
+
+范例一：使用last将帐号列出，仅取出帐号栏，进行排序后仅取出一位;
+
+last | cut -d ' ' -f1 | sort | uniq
+
+范例二：承上题，如果我还想要知道每个人的登入总次数呢？
+
+last | cut -d ' ' -f1 | sort | uniq -c
+```
