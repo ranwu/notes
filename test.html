@@ -1,35 +1,83 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Document</title>
-</head>
-<body>
-<script>
-	var person = {};
-	Object.defineProperty(person, "name", {
-		configurable: false,
-		value: "Nicholas"
-	});
 
-	Object.defineProperty(person, "name", {
-		configurable: true,
-		value: "Nicholas"
-	});
-</script>
-</body>
-</html>
-
+// 测试代码
 sysbench --test=oltp \
          --num-threads=1 \
          --max-requests=80000 \
          --oltp-test-mode=nontrx \
          --db-driver=mysql \
          --mysql-db=my_db \
-         --mysql-host=127.0.0.1 \
+         --mysql-host=10.251.53.208 \
          --mysql-port=1234 \
-         --mysql-user=user \
-         --mysql-password=pwd \
+         --mysql-user=mysql \
+         --mysql-password=123456 \
          --oltp-nontrx-mode=select \
          --db-ps-mode=disable \
          prepare (run,cleanup)
+
+// 连接中间件的测试结果
+OLTP test statistics:
+    queries performed:
+        read:                            80000
+        write:                           0
+        other:                           0
+        total:                           80000
+    transactions:                        80000  (825.65 per sec.)
+    deadlocks:                           0      (0.00 per sec.)
+    read/write requests:                 80000  (825.65 per sec.)
+    other operations:                    0      (0.00 per sec.)
+
+Test execution summary:
+    total time:                          96.8936s
+    total number of events:              80000
+    total time taken by event execution: 96.7996
+    per-request statistics:
+         min:                                  0.86ms
+         avg:                                  1.21ms
+         max:                                240.40ms
+         approx.  95 percentile:               1.65ms
+
+Threads fairness:
+    events (avg/stddev):           80000.0000/0.00
+    execution time (avg/stddev):   96.7996/0.00
+
+=======================================================================
+// 测试代码
+sysbench --test=oltp \
+         --num-threads=1 \
+         --max-requests=80000 \
+         --oltp-test-mode=nontrx \
+         --db-driver=mysql \
+         --mysql-db=my_db \
+         --mysql-host=10.251.128.73 \
+         --mysql-port=3306 \
+         --mysql-user=mysql \
+         --mysql-password=123456 \
+         --oltp-nontrx-mode=select \
+         --db-ps-mode=disable \
+         prepare (run,cleanup)
+
+// 直连master的测试结果
+OLTP test statistics:
+    queries performed:
+        read:                            80000
+        write:                           0
+        other:                           0
+        total:                           80000
+    transactions:                        80000  (2842.17 per sec.)
+    deadlocks:                           0      (0.00 per sec.)
+    read/write requests:                 80000  (2842.17 per sec.)
+    other operations:                    0      (0.00 per sec.)
+
+Test execution summary:
+    total time:                          28.1475s
+    total number of events:              80000
+    total time taken by event execution: 28.0694
+    per-request statistics:
+         min:                                  0.29ms
+         avg:                                  0.35ms
+         max:                                  9.57ms
+         approx.  95 percentile:               0.40ms
+
+Threads fairness:
+    events (avg/stddev):           80000.0000/0.00
+    execution time (avg/stddev):   28.0694/0.00
