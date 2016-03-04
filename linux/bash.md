@@ -717,3 +717,120 @@ ls -l /home | tee ~/homefile | more # 这个范例将ls的数据存一份到 ~/h
 
 tr用来删除一段信息当中的文字，或是替换。
 
+```
+tr [-ds] SET1...
+
+选项与参数：
+-d：删除讯息当中的SET1这个字符串;
+-s：取代重复的字符！
+
+范例一：将last输出的信息中，所有的小写变成大写字符：
+last | tr '[a-z]''[A-Z]' # 也可以不用加单引号
+
+范例二：将/etc/passwd输出的信息中，将冒号(:)删除
+cat /etc/passwd | tr -d ':'
+
+范例三：将/etc/passwd转存成dos断行到/root/passwd中，再将^M符号删除
+cp /etc/passwd /root/passwd && unix2dos /root/passwd
+```
+
+col:
+
+```
+col [-xb]
+
+选项与参数：
+
+-x：将tab键转换成对等的空格键
+-b：在文字内有反斜杠（/）时，仅保留反斜杠最后接的那个字符
+
+范例一：利用cat -A 显示出所有特殊按键，最后以col将[tab]转成空白。
+cat -A /etc/man.config | col -x | cat -A | more
+
+范例二：将col的man page转存为 /root/col.man的纯文本档
+man col > /root/col.man
+vi /root/col.man
+```
+
+join:
+
+主要是在处理两个档案中，有“相同数据”的那一行，才将他们加在一起的意思
+
+```
+join [-ti12] file1 file2
+
+选项与参数：
+
+-t：join默认以空格分隔数据，并且比对「第一个字段」的数据，如果两个档案相同，则将两笔数据联成一行，且第一个字段放在第一个！
+-i：忽略大小写的差异
+-1：数字1,代表「第一个档案要用那个字段来分析」的意思
+-2：代表「第二个档案要用那个字段来分析」的意思
+
+范例一：用root的身份，将/etc/passwd与/etc/shadow相关数据整合成一栏
+head -n 3 /etc/passwd /etc/shadow
+```
+
+需要特别注意的是，在使用join之前，你所需要处理的档案应该要事先经过排序（sort）处理，否则有些比对的项目会被略过呢。
+
+past：
+
+将两行贴在一起，中间以tab键隔开。
+
+```
+paste [-d] file1 file2
+
+选项与参数：
+-d：后面可以接分隔字符。预设是以tab来分隔的。
+-：如果file部分写成 -，表示来自standard input的资料的意思。
+
+范例一：将/etc/passwd 与 /etc/shadow同一行贴在一起
+paste /etc/passwd /etc/shadow
+
+范例二：先将/etc/group读出，然后与范例一贴上一起，且仅取出前三行：
+cat /etc/group | paste /etc/passwd /etc/shadow - | head -n 3
+```
+
+expand:
+
+这玩意儿就是在将[tab]按键转成空格键：
+
+```
+expand [-t] file
+
+-t: 后面可以接数字。一般来说，一个tab按键可以用8个空格键取代。我们也可以自定义一个[tab]按键代表多少个字符。
+
+范例一：将/etc/man.config内行首为MANPATH的字样就取出;仅取前三行;
+grep '^MANPATH' /etc/man.config | head -n 3
+
+范例二：承上，如果我想要将所有的符号都列出来？
+grep '^MANPATH' /etc/man.config | head -n 3 | cat -A
+
+范例三：承上，我将[tab]按键设定为6个字符的话？
+grep '^MANPATH' /etc/man.config | head -n 3 | expand -t 6 -| cat -A
+```
+
+expand会自动将[tab]转成空格键，所以，上面的例子来说，使用`cat -A`就会查不到 ^I的字符了。
+
+unexpand将空白转成[tab]的指令功能。
+
+### 分割命令：split
+
+```
+split [-bl] file PREFIX
+
+选项与参数：
+-b: 后面可接欲分割成的档案大小，可加单位，例如b，k，m等
+-l：以行数来进行分割
+PREFIX：代表前导符的意思，可作为分割档案的前导文字。
+
+范例一：我的/etc/termcap有七百多K，若想要分成300K一个档案时？
+cd /tmp; split -b 300k /etc/termcap termcap
+
+范例二：如何将上面的三个小档案合成一个档案，档案名为termcapback
+cat termcap* >> termcapback
+
+范例三：使用ls -al / 输出的信息中，每十行记录成一个档案
+ls -al / |split -l 10 - lsroot
+```
+
+
