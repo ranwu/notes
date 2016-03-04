@@ -682,5 +682,38 @@ wc [-lwm]
 cat /etc/man.config | wc
 141 722 4617
 |字 |行 |字符数|
+
+范例二：我知道使用last可以输出登入者，但是last最后两行并非账号内容，该如何取得这个月份登入系统的总人数？
+last | grep [a-zA-Z] | grep -v 'wtmp' | wc -l
 ```
+
+### 双向重导向：tee
+
+|Standard input| --> |tee| --> |Screen|
+                       |
+                       |
+                       V
+                     |file|
+
+tee会同时将数据流分送到档案与屏幕（screen），而输出到屏幕的，其实就是stdout，可以让下个指令继续处理。
+
+```
+tee [-a] file
+
+选项参数：
+
+-a：以累加方式，将数据加入file当中！
+
+last | tee last.list | cut -d " " -f1 # 这个范例可以让我们将last的输出存一份到last.list当中
+
+ls -l /home | tee ~/homefile | more # 这个范例将ls的数据存一份到 ~/homefile，同时屏幕也有输出信息
+
+如果再次执行上面那条命令，则`~/homefile`将会被覆盖。加上 `-a` 选项则累加。
+```
+
+### 字符转换命令：tr, col, join, paste, expand
+
+`tr`:
+
+tr用来删除一段信息当中的文字，或是替换。
 
