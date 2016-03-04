@@ -81,3 +81,15 @@ Test execution summary:
 Threads fairness:
     events (avg/stddev):           80000.0000/0.00
     execution time (avg/stddev):   28.0694/0.00
+
+====================================================================
+
+在主库上配置：
+
+log_bin=/var/lib/mysql/mysql-bin # 明确指定二进制日志的名字，保证在所有服务器上是一致的。
+
+在备库上配置：
+
+relay_log=/path/to/logs/relay-bin # 为中继日志指定绝对路径, 避免中继日志基于机器名来命名。
+skip_slave_start # 防止在备库在崩溃后自动启动复制机制。如果备库崩溃后自动启动，会导致和主库数据不一致的问题。
+read_only # 可以阻止大部分用户更改非临时表
