@@ -833,4 +833,48 @@ cat termcap* >> termcapback
 ls -al / |split -l 10 - lsroot
 ```
 
+参数代换: xargs
+
+x是加减乘除的乘号，args则是arguments（参数）的意思，所以说，这个东西就是产生某个指令的参数的意思。
+
+```
+xargs [-0epn] command
+
+选项与参数：
+
+-0：如果输入的stdin含有特殊字符，例如`,\,空格键等等字符时，这个-0参数可以将他还原成一般字符。这个参数还可以用于特殊状态哦。
+-e：这个是EOF（end of file）的意思。后面可以接一个字符串，当xargs分析到这个字符串时，就会停止继续工作！
+-p：在执行每个指令的argument时，都会询问使用者的意思;
+-n：后面接次数，每次command指令执行时，要使用几个参数的意思。看范例三。
+
+当小xargs后面没有接任何的指令时，默认是以echo来进行输出哦
+
+范例一：将/etc/passwd内的第一栏取出，仅取三行，使用finger这个指令将每个帐号内容秀出来。
+cut -d':' -f1 /etc/passwd |head -n 3 |xargs finger
+
+范例二：同上，但是每次执行finger时，都要询问使用者是否动作？
+cut -d':' -f1 /etc/passwd |head -n 3 |xargs -p finger
+
+范例三：将所有的/etc/passwd内的帐号都以finger查阅，但一次仅查阅5个帐号
+cut -d':' -f1 /etc/passwd |head -n 3 |xargs -p -n 5 finger
+
+范例四：同上，但是当分析到lp就结束这串指令？
+cut -d':' -f1 /etc/passwd | xargs -p -e'lp' finger
+```
+
+使用xargs的原因是，很多指令并不支持管线命令，因此我们可以透过xargs来提供该指令引用standard input之用。
+
+```
+范例五：找出/sbin底下具有特殊权限的文档名，并使用ls -l列出详细属性
+find /sbin -perm +7000 | ls -l
+
+正确的用法是：find /sbin -perm +7000 | ls -l
+```
+
+关于减号 - 的用途
+```
+tar -cvf - /home | tar -xvf -
+```
+
+前一个减号代表stdout，后一个减号代表stdin
 
