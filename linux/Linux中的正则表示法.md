@@ -135,3 +135,58 @@ nl /etc/passwd | sed '2,5c No 2-5 number'
 ```
 nl /etc/passwd | sed -n '5,7p'
 ```
+
+搜索并替代：
+
+```
+sed 's/要被取代的字符/新的字符/g'
+```
+
+grep的进阶用法：
+
+```
+grep [-A] [-B] [--color=auto] '搜寻字符串' filename
+
+选项与参数:
+
+-A : 后面可加数字，为after的意思，除了列出该行外，后续的n行也列出来;
+-B：后面可加数字，为before的意思，除了列出该行以外，前面的n行也列出来
+
+============ 例子 =====================
+范例三：打印出eth的内容的前2行和后三行
+dmesg | grep -n -A3 -B2 --color=auto 'eth'
+```
+
+取出IP地址的那一行，基于我的电脑：
+```
+ip addr | grep -n -A2 '^3' | tail -n 1
+```
+
+删除IP地址前面的内容：
+```
+ip addr | grep -n -A2 '^3' | tail -n 1 \ 
+| sed 's/^.*inet.//g'
+```
+
+删除IP地址后面的内容：
+```
+ip addr | grep -n -A2 '^3' | tail -n 1 \ 
+| sed 's/^.*inet.//g' | sed 's/brd.*//g'
+```
+
+删除man.conf的批注之后的数据：
+```
+cat /etc/man.config | grep 'MAN'|sed '/#.*$//g'
+```
+
+sed 删除操作
+```
+sed '/^$/d'
+```
+
+利用sed替换原文内容：
+```
+sed -i 's/\.$/\!/g' regular_express.txt
+```
+
+
