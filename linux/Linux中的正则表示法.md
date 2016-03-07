@@ -189,4 +189,26 @@ sed '/^$/d'
 sed -i 's/\.$/\!/g' regular_express.txt
 ```
 
+在最后一行加入内容：
+```
+sed -i '$a # This is a test' regular_express.txt
+```
 
+### 延伸正则表示法
+
+如果我要去除空白行与行首为#的行列，使用的是：
+```
+grep -v '^$' regular_express.txt | grep -v '^#'
+```
+上面的句子需要使用两次grep命令，如果使用延伸正则表示法的话：
+```
+egrep -v '^$|^#' regular_express.txt
+```
+
+加号`+`：
+
+意义：重复「一个或一个以上」的前一个RE字符
+
+问号`?`：
+
+意义：零个或一个的前一个RE字符
