@@ -1,0 +1,5 @@
+| mysql-bin.000011 |       107 |
+
+| mysql-bin.000016 |       559 |
+# 这是最新的一个
+查看mysql的所有用户：SELECT DISTINCT CONCAT('User: ''',user,'''@''',host,''';') AS query FROM mysql.user;

@@ -208,7 +208,35 @@ egrep -v '^$|^#' regular_express.txt
 加号`+`：
 
 意义：重复「一个或一个以上」的前一个RE字符
+```
+egrep -n 'go+d' regular_express.txt
+```
 
 问号`?`：
 
 意义：零个或一个的前一个RE字符
+```
+egrep -n 'go?d' regular_express.txt
+```
+
+管道符号|：
+
+意义：用或(or)的方式找出数个字符串
+```
+egrep -n 'gd|good' regular_express.txt
+egrep -n 'gd|good|dog' regular_express.txt
+```
+
+括号():
+
+意义：找出群组字符串
+```
+egrep -n 'g(la|oo)d' regular_express.txt
+```
+()+:
+
+意义：多个重复群组的判别
+```
+echo 'AxyzxyzxyzxyzC' | grep 'A(xyz)+C'
+```
+上面的例子意思是说，我要找个开头是A结尾是C，中间有个以上的“xyz”字符串的意思。
