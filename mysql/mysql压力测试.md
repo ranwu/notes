@@ -67,6 +67,6 @@ mysqlslap -a --concurrency=50,100,200 \
 --auto-generate-sql-load-type=read \
 --engine=innodb \
 --number-of-queries=200 \
---verbose \
+--verbose --debug-info \
 -uroot -p 
 ```
