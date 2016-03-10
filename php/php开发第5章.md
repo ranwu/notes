@@ -116,3 +116,51 @@ SELECT NOW();
 ```
 SELECT which_columns FROM which_table WHERE condition(s)
 ```
+mysql 运算符
+
+|mysql运算符|含义|
+|----|----|
+|!=(或<>)|不等于|
+|IS NOT NULL|具有一个值|
+|IS NULL|没有值|
+|IS TRUE|有一个真值|
+|IS FALSE|有一个假值|
+|BETWEEN|在范围内|
+|NOT BETWEEN|在范围外|
+|IN|在值列表中找到|
+|NOT IN|未在值列表中找到|
+|OR(or ||)|两个语句之一为真|
+|AND(or &&)|两个语句都为真|
+|NOT|条件语句不为真|
+|XOR|两个条件语句只有一个为真|
+
+### 使用条件语句
+
+选择姓氏为Simpson的所有用户：
+```
+SELECT * FROM users
+WHERE last_name = 'Simpson';
+```
+查询某个范围内的数据：
+```
+SELECT * FROM cities WHERE
+zip_code IN(90210, 90211)
+```
+
+查询user表中没有电子邮件地址的每一条记录的每一列：
+```
+SELECT * FROM users
+WHERE email IS NULL;
+```
+
+```
+SELECT * FROM users WHERE email=''; // 将匹配email字段为NULL的情况
+```
+
+### 选择其中的密码为mypass的所有记录
+
+```
+SELECT user_id, first_name, last_name
+FROM users
+WHERE pass = SHA1('mypass');
+```
