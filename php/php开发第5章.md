@@ -88,3 +88,20 @@ SHA1('mojito'), NOW());
 ```
 这种方法必须为每个字段提供一个值，将user_id设置为NULL值，依据其AUTO_INCREMENT
 描述，它将导致MySQL使用下一个逻辑编号。
+
+你偶尔会在SQL命令中看到使用反引号(`)。它被用来安全地引用可能与已存在的MySQL关键词重复的表名或列名。
+
+如果MySQL对你的上一条查询发出警告，使用SHOW WARNINGS命令可以显示问题
+
+INSERT中一个有意思的变化是REPLACE，如果使用的表的主键或唯一索引的值已经存在，那么REPLACE会更新存在的行。如果不存在则会同INSERT一样插入新行。
+
+### 选择数据
+
+查询语句：
+```
+SELECT wich_columns FROM which_table
+
+SELECT column1, column3 FROM tablename
+```
+1. 明确选择哪些列对性能有好处。
+2. 顺序，可以用一种不同于它们在表中布局的顺序返回列。
