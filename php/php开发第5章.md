@@ -157,10 +157,206 @@ WHERE email IS NULL;
 SELECT * FROM users WHERE email=''; // 将匹配email字段为NULL的情况
 ```
 
-### 选择其中的密码为mypass的所有记录
+选择其中的密码为mypass的所有记录
 
 ```
 SELECT user_id, first_name, last_name
 FROM users
 WHERE pass = SHA1('mypass');
 ```
+选择其用户ID小于10或大于20的用户名
+```
+SELECT first_name, last_name
+FROM users WHERE
+(user_id < 10) OR (user_id > 20);
+
+===============================
+
+// 这个查询也可以写为：
+SELECT first_name, last_name
+FROM users WHERE user_id
+NOT BETWEEN 10 and 20
+```
+MySQL支持关键字TRUE和FALSE，不区分大小写。在内部，TRUE等于1而FALSE等于0。因此，TRUE+TRUE=2。
+
+### 使用LIKE和NOT LIKE
+常常与两个通配置符一起使用：下划线(_)，用于匹配单个字符;百分号(%)，用于匹配0个或多个字符。
+
+带有Like条件语句的查询一般比较慢，因为它们不能利用索引，所以仅当绝对需要时才使用这种格式。
+
+LIKE和NOT LIKE 也可以用于数字列。
+
+可以添加任意个下滑线，表示添加任意多个字。
+
+### 排序查询结果
+
+```
+SELECT * FROM tablename ORDER BY column
+SELECT * FROM orders ORDER BY total
+```
+使用ORDER BY时的默认顺序是升序(ASC)，这意味着数字将从小到大递增，而日期将从过去到最近排列，文本则按照字母顺序排列。
+
+指定降序来排列：
+```
+SELECT * FROM tablename
+ORDER BY column DESC
+```
+
+按多个列对返回的值进行排序：
+```
+SELECT * FROM tablename
+ORDER BY column1, column2
+```
+
+ORDER BY与WHERE的结合使用，前者放到后者的后面。
+```
+SELECT * FROM tablename WHERE conditions
+ORDER BY column
+```
+
+按姓氏以字母顺序选择所有用户
+```
+SELECT first_name, last_name FROM
+users ORDER BY last_name;
+```
+
+按注册的日期显示所有不是Simpson的用户。
+```
+SELECT * FROM users
+WHERE last_name != 'Simpson'
+ORDER BY registration_data DESC;
+```
+
+可以在任何列类型（包括数字和日期）上使用ORDER BY。也可以在带有条件语句的查询中使用这个句子，并且吧ORDER BY放在WHERE之后。
+
+如果要排序的列是ENUM类型，排序会基于列创建时的ENUM值的顺序。例如，如果有一个gender列，定义为`ENUM('M','F')`，子句ORDER BY gender返回的结果是M记录在前。
+
+### 限制查询结果
+
+可以添加到查询语句中的另一个SQL子句是LIMIT。
+
+在SELECT查询中，WHERE指示返回哪些记录，ORDER BY决定如何对这些记录进行排序，LIMIT用于返回多少条记录。
+
+用法：
+```
+SELECT * FROM tablename LIMIT 3 // 返回3条记录
+SELECT * FROM tablename LIMIT x, y //返回从x开始的n条记录
+```
+
+返回第11~20条记录
+```
+SELECT * FROM tablename LIMIT 10, 10 // 从0开始数，10就代表第11条记录
+```
+
+可以与WHERE和/或ORDER BY一起使用LIMIT，总是将LIMIT放在查询的末尾。
+```
+SELECT which_columns FROM tablename WHERE 
+conditions ORDER BY column LIMIT x
+```
+
+在显示多页查询结果时(在多个页面成块显示它们)，常常使用LIMIT x, y子句。
+
+LIMIT字句不会改进查询的速度。
+
+LIMIT名词不是SQL标准的一部分。
+
+LIMIT不仅仅可以与SELECT一起使用，还可以与大多数类型的查询一起使用。
+
+### 更新数据
+
+语法：
+```
+UPDATE tablename SET column=value
+
+// 可以一次改变一条记录中多列的内容，用逗号隔开
+UPDATE tablname SET column1=valueA, 
+column5=valueB...
+```
+
+通常用WHERE子句来指定要更新哪些行。
+```
+UPDATE tablename SET column2=value 
+WHERE column5=value
+```
+
+>更新以及删除是使用主键最主要的原因。
+
+```
+SELECT user_id FROM users
+WHERE first_name = 'Michael'
+AND last_name = 'Chabon';
+```
+
+更新记录：
+```
+UPDATE users
+SET email='mike@authors.com'
+WHERE user_id = 18;
+```
+**提示：**
+
+1. 无论何时使用UPDATE，都要使用WHERE条件语句。
+2. 防止意外更新过多的行，可以对UPDATE应用一个LIMIT子句。
+3. 不应该更新的主键的值。
+
+### 删除数据
+
+语法：
+```
+DELETE FROM tablename //一旦删除将不会恢复
+DELETE FROM tablename WHERE condition
+```
+
+删除user_id为8的记录：
+```
+DELETE FROM users
+WHERE user_id = 8 LIMIT 1;
+```
+
+**提示：**
+
+清空一个表首选TRUNCATE：
+```
+TRUNCATE TABLE tablename
+```
+
+要删除表中的所有数据以及表本身，可以使用DROP TABLE：
+```
+DROP TABLE tablename
+```
+
+要删除整个数据库(包括其中的每一个表及其所有数据)，可以使用：
+```
+DROP DATABASE databasename
+```
+
+### 使用函数
+
+对列的某个值应用某个函数：
+```
+SELECT FUNCTION(column) FROM tablename
+```
+
+要对一个列的值应用某个函数，同时还选择其他一些列：
+```
+SELECT *, FUNCTION(column) FROM tablename
+SELECT column1, FUNCTION(column2),column3 FROM tablename
+```
+
+函数既可以应用于存储的数据（即列），也可以应用于字面量值。
+
+**别名**
+
+别名(alias)只是查询中对表或列进行的符号性重命名。别名通常应用于表、列或函数调用，它提供了引用某个对象的快捷方式。使用AS名词来创建别名：
+```
+SELECT registration_date AS reg FROM users
+```
+
+如果在表或列上定义了一个别名，那么整个查询必须一致地使用那个相同的别名，而不用原来的名称：
+```
+SELECT first_name AS name FROM users WHERE name='Sam' 
+// 这有别于标准的SQL，标准的SQL不支持在WHERE条件语句中使用别名。
+```
+
+
+
