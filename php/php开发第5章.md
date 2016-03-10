@@ -105,3 +105,14 @@ SELECT column1, column3 FROM tablename
 ```
 1. 明确选择哪些列对性能有好处。
 2. 顺序，可以用一种不同于它们在表中布局的顺序返回列。
+
+查询当前日期时间：
+```
+SELECT NOW();
+```
+
+### 使用条件语句
+
+```
+SELECT which_columns FROM which_table WHERE condition(s)
+```
