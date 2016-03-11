@@ -528,4 +528,6 @@ TIME_FORMAT()只能格式化时间值，并且仅当存储时间值(HH:MM:SS)时
 SELECT DATE_FORMAT(datetime, formatting)
 ```
 
+格式化参数表：
+![formatting](../pic/formatting.jpg)
 
