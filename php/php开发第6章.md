@@ -57,7 +57,7 @@ MySQL只允许每个表有一个主键，虽然你可以让主键基于多列。
 数据库设计过程的结果就是ERD(实体-关系图)或ERM(实体-关系模型)。图像化的数据库表示方法使用图形来表示表和列。
 
 下图是一个关系图：
-![ralations](../pic/relations)
+![ralations](../pic/relations.jpeg)
 
 ### 第一范式
 
