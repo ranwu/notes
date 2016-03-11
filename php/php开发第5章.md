@@ -358,5 +358,174 @@ SELECT first_name AS name FROM users WHERE name='Sam'
 // 这有别于标准的SQL，标准的SQL不支持在WHERE条件语句中使用别名。
 ```
 
+别名是区分大小写的字符串，由数字、字母和下划线组成。
+
+### 文本函数
+
+|函数|用法|用途|
+|----|----|----|
+|CONCAT()|CONCAT(t1, t2, ...)|创建形如t1t2的新字符串|
+|CONCAT()|CONCAT_WS(S, t1, t2, ...)|创建形如t1St2S的新字符串|
+|LENGTH()|LENGTH(t)|返回t中的字符数|
+|LEFT()|LEFT(t, y)|从t中返回最左边的y个字符|
+|RIGHT()|RIGHT(t, x)|从t中返回最右边的x个字符|
+|TRIM()|TRIM(t)|从t的开头和末尾删除多余的空格|
+|UPPER()|UPPER(t)|大写t中的所有字符|
+|LOWER()|LOWER(t)|小写t中的所有字符|
+|REPLACE()|REPLACE(t1, t2, t3)|把t1字符串中的t2替换成t3|
+|SUBSTRING()|SUBSTRING(t, x, y)|从t中返回开始于x的y个字符(索引从1开始)|
+
+CONCAT()用于执行连接，PHP中使用句点`.`
+```
+SELECT CONCAT(t1, t2) FROM tablename
+```
+
+比如将姓名合并：
+```
+SELECT CONCAT(first_name, ' ', last_name) FROM users
+```
+
+由于连接通常会返回列的新形式，所以推荐使用别名:
+```
+SELECT CONCAT(first_name, ' ', last_name) AS Name FROM users
+```
+在查询语句后面任何需要用到别名所对应的那列的数据的函数都可以使用此别名。
+
+找出最长的姓氏：
+```
+SElECT LENGTH(last_name) AS L,
+last_name FROM users
+ORDER BY L DESC LIMIT 1;
+```
+
+MySQL具有两个用于对文本执行正则表达式查找的函数：`REGEXP()` 和 `NOT REGEXP()`
+
+CONCAT()具有一个名为CONCAT_WS()的派生函数，它代表带分隔符。语法是：
+```
+CONCAT_WS(separator, t1, t2)
+```
+
+例子，将人名格式化为：
+```
+First<SPACE>Middle<SPACE>Last
+
+// 可以写为：
+SELECT CONCAT_WS(' ', first, middle, last) AS Name FROM tablename
+```
+
+CONCAT_WS会忽略具有NULL值的列。
+
+### 数字函数
+|函数|用法|用途|
+|----|----|----|
+|ABS()|ABS(n)|返回n的绝对值|
+|CEILING()|CEILING(n)|基于n的值返回下一个最大的整数|
+|FLOOR()|FLOOR(n)|返回n的整数值|
+|FORMAT()|FORMAT(n1, n2)|返回格式化一个数的n1，这个数带有n2位小数，并且每3位之间插入一个逗号|
+|MOD()|MOD(n1, n2)|返回n1除以n2的余数|
+|POW()|POW(n1, n2)|n2是n1的幂|
+|RAND()|RAND()|返回0~1.0之间的一个随机数|
+|ROUND()|ROUND(n1, n2)|返回数n1，它被四舍五入为n2位小数|
+|SQRT()|SQRT(n)|计算n的平方根|
+
+例子：
+
+```
+FORMAT(car_cost, 2) //将把数字转换为`20,198.20`
+```
+
+ROUND()将获取一个值，比如来自某一列，将其四舍五入为一个指定小数位的数字。
+如果没有指定小数位，就会将其四舍五入为最接近的整数。
+
+RAND()函数可以与查询一起用于随即顺序返回结果：
+```
+SELECT * FROM tablename ORDER BY RAND()
+```
+
+显示一个被格式化为美元金额的数字
+```
+SELECT CONCAT('$', FORMAT(5639.6, 2))
+AS cost;
+```
+
+从表中随机获取一个电子邮件地址：
+```
+SELECT email FROM users
+ORDER BY RAND() LIMIT 1;
+```
+
+MOD()函数等同于使用百分号：
+```
+SELECT MOD(9, 2)
+SELECT 9%2
+```
+
+### 日期和时间函数
+
+|函数|用法|用途|
+|----|----|----|
+|DATE()|DATE(dt)|返回dt的日期值|
+|HOUR()|HOUR(dt)|返回dt的小时值|
+|MINUTE()|MINUTE(dt)|返回dt的分钟值|
+|SECOND()|SECOND(dt)|返回dt的秒值|
+|DAYNAME()|DAYNAME(dt)|返回dt中天的名称|
+|DAYOFMONTH()|DAYOFMONTH(dt)|返回dt中天的数字值|
+|MONTHNAME()|MONTHNAME(dt)|返回dt中月份的名称|
+|MONTH()|MONTH(dt)|返回dt中月份的数字值|
+|YEAR()|YEAR(column)|返回dt中年份的数字值|
+|CURDATE()|CURDATE()|返回当前日期|
+|CURTIME()|CURTIME()|返回当前时间|
+|NOW()|NOW()|返回当前日期和时间|
+|UNIX_TIMESTAMP()|UNIX_TIMESTAMP(dt)|返回从新纪元起直到当前时刻或者直到指定日期的秒数|
+|UTC_TIMESTAMP()|UTC_TIMESTAMP(dt)|返回从新纪元起直到当前时刻或直到指定日期的秒数(UTC时间)|
+
+显示上一个用户注册的日期：
+```
+SELECT DATE(registration_date) AS
+Date FROM users ORDER BY 
+registration_date DESC LIMIT 1;
+```
+
+返回第一个注册用户的一周中的某一天：
+```
+SELECT DAYNAME(registration_date) AS
+Weekday FROM users ORDER BY
+registration_date ASC LIMIT 1;
+```
+
+返回MySQL服务器上的当前日期和时间：
+```
+SELECT CURDATE(), CURTIME();
+```
+
+显示当前月份的最后一天：
+```
+SELECT LAST_DAY(CURDATE()),
+MONTHNAME(CURDATE());
+```
+
+下列几个函数可以计算日期和时间：
+```
+ADDDATE()
+SUBDATE()
+ADDTIME()
+SUBTIME()
+```
+
+### 格式化日期和时间
+两个函数：
+```
+DATE_FORMAT()
+TIME_FORMAT()
+```
+
+如果一个值同时包含日期和时间，那么DATE_FORMAT()可以用于格式化它们。
+
+TIME_FORMAT()只能格式化时间值，并且仅当存储时间值(HH:MM:SS)时才可以使用它。
+
+语法：
+```
+SELECT DATE_FORMAT(datetime, formatting)
+```
 
 
