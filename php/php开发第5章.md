@@ -531,3 +531,76 @@ SELECT DATE_FORMAT(datetime, formatting)
 格式化参数表：
 ![formatting](../pic/formatting.jpg)
 
+假设名为the_date的列中存储有1996-04-20 11:07:45这个日期和时间，那么常见的格式化任务和结果将是：
+```
+// 时间(11:07:45 AM)
+TIME_FORMAT(the_date, '%r')
+
+// 不带秒的时间(11:07 AM)
+TIME_FORMAT(the_date, '%l:%i %p')
+
+// 日期(April 20th, 1996)
+DATE_FORMAT(the_date, '%M %D, %Y')
+```
+
+以Month DD, YYYY-HH:MM形式返回当前日期和时间：
+```
+SELECT DATE_FORMAT(NOW(), '%M %e, %Y %l:%i');
+```
+
+使用24小时表示法显示当前时间：
+```
+SELECT TIME_FORMAT(CURTIME(), '%T');
+```
+
+选择按日期排序的每个电子邮件地址和注册日期，为最后5个注册的用户把日期格式化为Weekday Month Day Year:
+```
+SELECT email, DATE_FORMAT(registration_date, '%a %b %e %Y')
+AS Date FROM users
+ORDER BY registration_date DESC
+LIMIT 5;
+```
+
+提示：
+
+在Web应用程序中，几乎总是应该使用MySQL函数来格式化自数据库中的任何日期。
+
+访问客户机上的日期或时间的唯一方式是使用JavaScript
+
+### 回顾
+创建新数据库的命令是`CREATE DATABASE`，创建表：`CREATE TABLE`
+
+选择要使用的数据库的命令：`USE`
+
+可以向表中添加记录的命令：
+```
+INSERT INTO
+UPDATE ... SET ...  
+CREATE TABLE
+```
+
+- 数值不应该用引号括住;
+- 字符串值(对于CHAR、VARCHAR和TEXT列类型)必须总是用引号括住;
+- 日期和时间值必须总是用引号括住;
+- 函数不能用引号括住;
+- 单词NULL一定不能用引号括住;
+
+星号代表选择表中的所有内容，包括每行每列。用WHERE条件子句来限制。
+
+NOW()函数用来输出当前日期和时间。
+
+用LIMIT来限定返回哪些行。
+
+LIKE和NOT LIKE支持模糊查询，等值查询比较快一些。通配符有：`%`，`_`
+
+用ORDER BY 子句，默认为升序(ASC)排列，用DESC反转排序，多列排序：`ORDER BY column1, column2`
+
+LIMIT限制输出的行数，LIMIT x 表示限制行数为1条，LIMIT x, y 表示从x开始的y条记录。
+
+UPDATE...SET...命令来改变表记录。改变多列：UPDATE tablename SET column1=value1, colum2=value2，用WHERE来限定作用于哪些行。
+
+DELETE 命令用来删除数据。用WHERE条件字句来限定要删除哪些行。
+
+对表或列进行重命名的操作，它不改变原始表或列名，只是一个指向那个表名或列名的指针。在列明后面跟上一个空格和alias再加上简短的名称即可创建。别名可以简化表或列名，和查询结果识别度。
+
+ 
