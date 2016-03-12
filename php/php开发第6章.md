@@ -154,4 +154,44 @@ registration_date DATETIME NOT NULL,
 PRIMARY KEY(user_id)
 );
 ```
+**创建索引的步骤：**
 
+每个表都必须有一个主键盘，因而会有一个`PRIMARY KEY`索引。
+
+语法`table_name.column_name`是引用指定表的指定列的方法。
+
+为表中值不能重复的列添加`UNIQUE`索引。
+
+添加`FULLTEXT`索引。
+
+为经常在`WHERE`字句中用到的列添加标准索引。
+
+下列查询可确认用户提供的信息是否正确：
+```
+SELECT * FROM users WHERE pass=SHA1('provided_password')
+AND email='provided_email_address'
+```
+
+为经常在`ORDER BY`字句中用到的列添加标准索引。
+
+为经常在`JOIN`中用到的列添加标准索引。
+
+外键盘必须经过索引(主键已被索引)那个JOIN才会是高效的。在论坛例子中，信息表的三个外键字段应该被索引：forum_id， parent_id和user_id。
+
+>提示：索引可以在已经有了被填充的表之后创建。然而，如果尝试为一个有重复值的列添加UNIQUE索引，那就会出错并且索引不会被创建。
+
+MySQL使用术语`KEY`作为索引的同义词：
+```
+KEY full_name(last_name, first_name)
+```
+
+可以限制一个索引的长度为指定字符数，例如前10个：
+```
+INDEX index_name(column_name(10))
+```
+
+### 使用不同的表类型
+
+MySQL有一个在其他的数据库不常见的特性，即为表使用不同类型的能力(表的类型也称为它的存储引擎)。
+
+InnoDB表可以使用事务，并且在处理UPDATE的时候表现良好。InnoDB表同样支持外键约束和行级锁定。但是InnoDB的存储引擎通常比MyISAM的慢并且需要更多的服务器磁盘空间。同时，InnoDB表不支持FULLTEXT索引。
