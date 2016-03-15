@@ -195,3 +195,76 @@ INDEX index_name(column_name(10))
 MySQL有一个在其他的数据库不常见的特性，即为表使用不同类型的能力(表的类型也称为它的存储引擎)。
 
 InnoDB表可以使用事务，并且在处理UPDATE的时候表现良好。InnoDB表同样支持外键约束和行级锁定。但是InnoDB的存储引擎通常比MyISAM的慢并且需要更多的服务器磁盘空间。同时，InnoDB表不支持FULLTEXT索引。
+
+要在定义表时指定存储引擎，需要在声明的末尾添加一个句子：
+```
+CREATE TABLE tablename(
+column1name COLUMNTYPE,
+column2name COLUMNTYPE...
+) ENGINE = type
+```
+
+如果创建表的时候没有指定存储引擎，MySQL将会使用服务器默认的类型。
+
+MySQL的这个功能有非常重要的意义，因为你可以在同一个数据库中混合使用不同的类型。这样你可以为每个表定制最佳的功能和特性。
+
+### 设定表的类型
+**1) 查找你的MySQL服务器上可用的表类型。**
+```
+SHOW ENGINE;
+```
+
+**2) 如果表需要FULLTEXT索引，就要选用MyISAM类型。**
+
+论坛的`messages`表需要FULLTEXT索引。因而，这个表必须是MyISAM类型的。
+
+**3) 如果某个表需要支持事务，要设置为InnoDB类型。**
+
+论坛数据库中的forums表和users表都不需要事务。
+
+**4) 如果上面的项都不适用，使用默认的存储引擎。**
+
+*提示:*
+
+MEMORY类型在内存中创建表，因此它的速度非常快，但却无法实现持久化存储。
+
+### 语言和MySQL
+运行`SHOW CHARACTER SET`命令可以查看数据库所支持的编码。MySQL中的每种编码都有一种或多种校对规则(collation)。
+
+要查看MySQL可用的校对规则，运行以下查询：
+```
+SHOW COLLATION LIKE 'charset%'
+```
+
+校对规则名字的后缀ci表示不区分大小写，cs后缀表示区分大小写，bin后缀表示二元(binary)校对规则
+
+重要的是，数据库使用的字符集必须和你的PHP脚本一致。如果你的PHP脚本没有使用UTF-8编码，那就在数据库中使用与你的PHP脚本相匹配的编码。
+
+在MySQL中，服务器是一个整体，每个数据库、每个表，甚至每个字符串列都可以有一个定义的字符集和校对规则。要在创建数据时，可以这样做：
+```
+CREATE DATABASE name CHARACTER SET charset COLLATE collation
+```
+
+要在创建表时设置这些值，使用以下命令：
+```
+CREATE TABLE name (
+column definitions
+) CHARACTER SET charset COLLATE collation
+```
+
+要为列创建字符集和校对规则，在定义时添加以下子句(只能为文本类型使用)：
+```
+CREATE TABLE name (
+something TEXT CHARACTER SET charset COLLATE collation...
+)
+```
+在以上这些情况下，两个子句都是可选的。如果省略，会使用默认的字符集或校对规则。定义数据库时确立字符集和校对规则会影响到可以存储的数据（例如，你不能在列中存储编码不支持的字符）。
+
+第二个问题是与MySQL通信使用的编码。如果你想在表中使用中文编码存储中文字符，这些字符需要是要使用同样的编码传输。在MySQL客户端，使用下面的代码设置编码：
+```
+CHARSET charset
+```
+
+### 指定字符集和校对规则
+
+
