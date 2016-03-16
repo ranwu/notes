@@ -49,3 +49,5 @@ UNIQUE (username),
 UNIQUE (email),
 INDEX login (pass, email)
 ) ENGINE = INNODB;
+
+
