@@ -48,4 +48,4 @@ PRIMARY KEY (user_id),
 UNIQUE (username),
 UNIQUE (email),
 INDEX login (pass, email)
-) ENGINE = INNODB;
+) ENGINE=INNODB;
