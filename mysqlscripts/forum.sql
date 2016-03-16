@@ -48,9 +48,4 @@ PRIMARY KEY (user_id),
 UNIQUE (username),
 UNIQUE (email),
 INDEX login (pass, email)
-<<<<<<< HEAD
-
-
-=======
 ) ENGINE=INNODB;
->>>>>>> ec93f4f9d0779c542236be793d4c25fd9622590f
