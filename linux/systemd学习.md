@@ -39,5 +39,43 @@ $ disown
 $ disown -a
 
 # 不移除后台任务，但是让它们不会收到SIGHUP信号
+$ disown -h
+
+# 根据jobId，移出指定的后台任务
+$ disown %2
+$ disown -h %2
 ```
+
+### 标准I/O
+
+开启一个nodejs服务：
+```javascript
+var http = require('http');
+
+http.createServer(function(req, res) {
+    console.log('server starts...');
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.end('Hello, World');
+}).listen(5000);
+```
+
+对后台任务的标准I/O进行重定向：
+```bash
+$ node server.js > stdou.txt 2> stderr.txt < /dev/null &
+$ disown
+```
+
+### nohup命令
+
+```bash
+$ nohup node server.js &
+```
+
+`nohup`命令对`server.js`进程做了三件事：
+1. 阻止SIGHUP信号发送到这个进程。
+2. 关闭标准输入。该进程不能再接收任何输入，即使运行在前台。
+3. 重定向标准输出和标准错误到文件`nohup.out`。
+
+>注意，nohup命令不会自动把进程变为后台任务，所以必须加上`&`符号。
+
 
