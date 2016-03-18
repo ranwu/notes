@@ -80,4 +80,33 @@ import urllib2
 response = urllib2.urlopen('http://www.baidu.com', data, 10)
 ```
 
+urllib和urllib2
 
+在python2里为urllib2，但在python3里被划分为几个小模块，urllib.request、
+urllib.parse和urllib.reeor
+
+urllib是python的标准库，包含了从网络请求数据，处理cookie，甚至改变请求头和用户
+代理这些元数据的函数。
+
+BeautifulSoup通过定位HTML标签来格式化和组织复杂的网络信息，用简单易用的Python
+对象为我们展现XML结构信息。
+
+URL异常的处理方式：
+```
+try:
+    html = urlopen("http://www.pythonscraping.com/pages/page1.html")
+except HTTPError as e:
+    print(e)
+    # 返回空值，中断程序，或者执行另一个方案
+else:
+    # 程序继续。注意：如果你已经在上面异常捕获那一段代码里返回或中断(break),
+    # 那么就不需要使用else语句了，这段代码也不会执行
+```
+
+我们可以增加一个判断语句检测返回的html是不是None：
+```
+if html is None:
+    print("URL is not found")
+else:
+    # 程序继续
+```
