@@ -349,5 +349,76 @@ s1 | s2
 `max`返回最大的数
 
 ### 数据类型转换
+```
+int()
+```
+
+### 定义函数
+```python
+def my_abs(x):
+    if x >= 0:
+        return x
+    else:
+        return -x
+```
+
+`return None`可以简写为`return`
+
+如果已经把`my_abs()`的函数定义保存为`abstest.py`文件了，那么，可以在
+该文件的当前目录下启动Python解释器，用`from abstest import my_abs`来
+倒入`my_abs()`函数
+
+### 空函数
+```python
+def nop():
+    pass
+```
+`pass`语句什么都不做，实际上， pass可以用来作为占位符，比如现在还没想好
+怎么写函数的代码，就可以先放一个`pass`，让代码能运行起来。
+
+`pass`还可以用在其他语句里，比如：
+```python
+if age >= 18:
+    pass
+```
+缺少了pass会有语法错误。
+
+### 参数检查
+调用函数时，如果参数个数不对，Python解释器会自动检查出来，并抛出`TypeError`:
+
+对`my_abs`做类型检查，只允许整数和浮点数类型的参数。数据类型检查可以用
+内置函数`isinstance()`实现：
+```python
+def my_abs(x):
+    if not isinstance(x, (int, float)):
+        raise TypeError('bad operand type')
+    if x >= 0:
+        return x
+    else:
+        return -x
+```
+
+### 返回多个值
+
+比如在游戏中经常需要从一个点移动到另一个点，给出坐标，位移和角度，就
+可以计算出新的坐标：
+```python
+import math
+
+def move(x, y, step, angle=0):
+    nx = x + step * math.cos(angle)
+    ny = x - step * math.sin(angle)
+    return ny, ny
+```
+
+在语法上，返回一个tuple可以省略括号，而多个变量可以同时接收一个tuple，
+按位置赋给对应的值，所以Python的函数返回多值其实就是返回一个tuple。
+
+小结：
+1. 定义函数时，需要确定函数名和参数个数;
+2. 如果有必要，可以先对参数的数据类型做检查;
+3. 函数体内部可以用`return`随时返回函数结果;
+4. 函数执行完毕也没有`return`语句时，自动`return None`
+5. 函数可以同时返回多个值，但其实就是一个tuple
 
 
