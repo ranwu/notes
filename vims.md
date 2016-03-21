@@ -52,3 +52,8 @@ netstat -tlnp
 ```
 kill -s 9 PID
 ```
+
+让当前命令走代理：
+```
+env all_proxy=socks5://127.0.0.1:1080
+```
