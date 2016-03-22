@@ -487,3 +487,43 @@ person('Michael', 30)
 person('Bob', 35, city='Beijing')
 person('Adam', 45, gender='M', job='Eengineer')
 ```
+
+###迭代
+
+方式：
+1. for.. in... //默认键迭代
+2. for value in d.vaues() //值迭代
+3. for k, v in d.items() //值和键迭代
+
+collections.iterable //判断对象是否可迭代
+
+方法：
+```
+isinstance(<object>, Iterable)
+```
+
+enumerate()函数把list变成索引-元素对。
+
+任何可迭代对象都可以作用于`for`循环，包括我们自定义的数据类型，只要符合迭代条件，就
+可以使用`for`循环。
+
+```python
+d = {'x':'A', 'y':'B', 'z':'C'}
+[k + '=' + v for k, v in d.items()]
+['y=B', 'x=A', 'z=C']
+```
+
+把`list`，`dict`, `str`等`Iterable`变成`Iterator`可以使用`iter()函数
+
+凡是可作用于`for`循环的对象都是`Iterable`类型;
+
+凡是可作用于`next()`函数的对象都是`Iterator`类型，它们表示一个惰性计算的序列;
+
+可通过`iter()`函数来获得一个`Iterator`对象。
+
+python的`for`循环本质上就是通过不断调用`next()`函数实现的。
+
+由于`abs`函数实际上是定义在`__builtin__`模块当中，所以要让修改`abs`变量的指向在其他模块也生效，要用
+`__builtin__.abs = 10`
+
+`reduce`把结果继续和序列的下一个元素做累积运算。
